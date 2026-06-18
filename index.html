@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실손의료보험 세대별 인터랙티브 인포그래픽</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+        }
+        /* Custom scrollbar for better visual polish */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* -------------------------------------------------------------
+           PRINT STYLES: Optimized for A4 paper output (Ctrl+P / Cmd+P)
+           ------------------------------------------------------------- */
+        @media print {
+            /* General page settings */
+            @page {
+                size: A4 portrait;
+                margin: 15mm 15mm 15mm 15mm;
+            }
+            
+            body {
+                background: #ffffff !important;
+                color: #0f172a !important;
+                font-size: 11pt !important;
+                line-height: 1.5 !important;
+            }
+
+            /* Hide interactive/web-only elements */
+            header,
+            footer,
+            .no-print,
+            #toast,
+            #quiz-container,
+            .grid-cols-5, /* Timeline controls */
+            #gen-details-panel, /* Dynamic screen panel */
+            button {
+                display: none !important;
+            }
+
+            /* Show print-only sections */
+            .print-only {
+                display: block !important;
+            }
+
+            /* Ensure layouts are stacked and readable */
+            .print-grid {
+                display: block !important;
+            }
+
+            .print-card {
+                background: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 12px !important;
+                padding: 15px !important;
+                margin-bottom: 20px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            /* Page breaks to prevent awkward text cuts */
+            .page-break {
+                page-break-before: always;
+                break-before: page;
+            }
+
+            /* Table print styling */
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 9pt !important;
+            }
+            th, td {
+                border: 1px solid #cbd5e1 !important;
+                padding: 8px !important;
+            }
+            th {
+                background-color: #f1f5f9 !important;
+                color: #000000 !important;
+            }
+        }
+
+        /* Hide print-only layout on screen */
+        .print-only {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Screen Header (Hidden in Print) -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 transition-all duration-300 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-blue-600 rounded-lg text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg tracking-tight flex items-center gap-2">
+                        세대별 실손보험 인포그래픽 가이드
+                        <span class="bg-teal-500 text-[10px] text-slate-950 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">2026 개정판</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">1세대부터 최신 5세대까지 완벽 가이드 및 맞춤형 계약전환 자가진단</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="scrollToSection('advisor-section')" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-lg shadow-blue-900/30">
+                    전환 시뮬레이터 실행
+                </button>
+                <button onclick="window.print()" class="bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-teal-900/20">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    A4 용지 인쇄
+                </button>
+                <button onclick="copyShareLink()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-lg transition border border-slate-700 flex items-center gap-1.5">
+                    공유하기
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Print Only Header (Visible only when printing) -->
+    <div class="print-only mb-8 border-b-2 border-slate-900 pb-4">
+        <h1 class="text-3xl font-black tracking-tight text-slate-900">세대별 실손의료보험 종합 분석 리포트</h1>
+        <p class="text-sm text-slate-500 mt-1">1세대(구실손)부터 2026년 최신 개정 5세대 실손의료보험 가이드 및 분석자료</p>
+        <p class="text-xs text-slate-400 mt-2">출력일자: <span id="print-date">2026년 6월 18일</span> | 제공: 금융소비자 정보 포털</p>
+    </div>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+        
+        <!-- Hero Section (Hidden in print) -->
+        <section class="relative bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 rounded-3xl p-6 sm:p-10 text-white shadow-2xl overflow-hidden no-print">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div class="relative z-10 max-w-3xl space-y-4">
+                <span class="inline-flex items-center gap-1.5 bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs px-3 py-1 rounded-full font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                    2026년 5월 5세대 실손의료보험 전격 도입 반영
+                </span>
+                <h2 class="text-3xl sm:text-5xl font-black leading-tight tracking-tight">
+                    나에게 꼭 맞는 실손보험은?<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-300">보험료 폭탄 대비 솔루션</span>
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    실손보험은 가입 시기에 따라 1세대부터 5세대까지 보장 비율과 보험료 갱신 구조가 판이합니다. 
+                    과도한 보험료를 아끼고 치명적인 중증 의료비 보장을 지켜내기 위한 최선의 대안을 분석해 드립니다.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-4 text-xs text-slate-300">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-teal-400 font-bold">?</span> 100% 무상 보장의 1세대
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-teal-400 font-bold">?</span> 차등 제도가 결합된 4세대
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-teal-400 font-bold">?</span> 필수의료를 강화한 최신 5세대
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Generation Explorer Section (On-screen tabs, hidden in print) -->
+        <section class="space-y-6 no-print">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">세대별 집중 분석 타임라인</h3>
+                    <p class="text-slate-500 text-sm">원하는 세대를 선택하여 특장점과 단점, 갱신 트렌드를 확인해 보세요.</p>
+                </div>
+                <div class="text-xs text-slate-500 italic bg-white px-3 py-1.5 rounded-lg border border-slate-100 self-start md:self-auto">
+                    * 각 세대 탭을 누르면 상세 보장 지표가 동적으로 바뀝니다.
+                </div>
+            </div>
+
+            <!-- Timeline Tab Controls -->
+            <div class="grid grid-cols-5 gap-1.5 p-1.5 bg-slate-200/80 rounded-2xl">
+                <button onclick="selectGeneration(1)" id="tab-gen-1" class="py-3 px-1 sm:px-4 rounded-xl text-center font-bold text-xs sm:text-sm transition-all duration-200 shadow-sm bg-white text-slate-900 scale-100">
+                    <span class="block text-[10px] opacity-75 font-normal">~'09.09</span>
+                    1세대
+                </button>
+                <button onclick="selectGeneration(2)" id="tab-gen-2" class="py-3 px-1 sm:px-4 rounded-xl text-center font-bold text-xs sm:text-sm transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    <span class="block text-[10px] opacity-75 font-normal">'09.10~'17.03</span>
+                    2세대
+                </button>
+                <button onclick="selectGeneration(3)" id="tab-gen-3" class="py-3 px-1 sm:px-4 rounded-xl text-center font-bold text-xs sm:text-sm transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    <span class="block text-[10px] opacity-75 font-normal">'17.04~'21.06</span>
+                    3세대
+                </button>
+                <button onclick="selectGeneration(4)" id="tab-gen-4" class="py-3 px-1 sm:px-4 rounded-xl text-center font-bold text-xs sm:text-sm transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    <span class="block text-[10px] opacity-75 font-normal">'21.07~'26.05</span>
+                    4세대
+                </button>
+                <button onclick="selectGeneration(5)" id="tab-gen-5" class="py-3 px-1 sm:px-4 rounded-xl text-center font-bold text-xs sm:text-sm transition-all duration-200 text-slate-600 hover:text-slate-900 flex flex-col items-center justify-center">
+                    <span class="block text-[9px] text-teal-600 font-bold animate-pulse">2026 신설</span>
+                    5세대
+                </button>
+            </div>
+
+            <!-- Dynamic Information Card Container -->
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-xl p-6 sm:p-8 transition-all duration-300">
+                <div id="gen-details-panel" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Left side: Generation Badges and core ratings -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span id="gen-badge-name" class="bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full font-black">1세대 (구실손)</span>
+                                <span id="gen-badge-period" class="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full font-medium">~ 2009년 9월 가입</span>
+                            </div>
+                            <h4 id="gen-title" class="text-3xl font-black text-slate-900">무한 보장과 무한 갱신의 시대</h4>
+                            <p id="gen-one-liner" class="text-rose-500 font-semibold text-sm">"보장은 천국, 보험료는 갱신 폭탄"</p>
+                        </div>
+
+                        <!-- Mini Visual Charts / Progress Bars -->
+                        <div class="space-y-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">핵심 지표 레벨</h5>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold mb-1">
+                                        <span>초기 월 고정 보험료</span>
+                                        <span id="stat-premium-label" class="text-rose-600">최대 수준</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 h-2.5 rounded-full">
+                                        <div id="stat-premium-bar" class="bg-rose-500 h-2.5 rounded-full transition-all duration-500" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold mb-1">
+                                        <span>실제 보장 비율 (자기부담률 낮을수록 우수)</span>
+                                        <span id="stat-coverage-label" class="text-teal-600">100% 보장</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 h-2.5 rounded-full">
+                                        <div id="stat-coverage-bar" class="bg-teal-500 h-2.5 rounded-full transition-all duration-500" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold mb-1">
+                                        <span>노후 유지 적합성 (안정적 납입성)</span>
+                                        <span id="stat-retention-label" class="text-red-500">매우 낮음</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 h-2.5 rounded-full">
+                                        <div id="stat-retention-bar" class="bg-red-500 h-2.5 rounded-full transition-all duration-500" style="width: 20%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Retention Recommendation -->
+                        <div class="p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50 flex gap-3">
+                            <div class="text-blue-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div class="space-y-1">
+                                <h5 class="text-xs font-bold text-blue-900">전문가 유지/전환 추천 의견</h5>
+                                <p id="expert-opinion" class="text-xs text-slate-600 leading-relaxed">
+                                    만성 질환이 있거나 평소 정형외과 물리치료를 정기적으로 많이 받으신다면 절대 전환하지 말고 무리해서라도 유지하세요. 하지만 건강 체질이며 보험료가 부담된다면 5세대로 즉시 계약 전환이 합리적입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right side: Pros, Cons, and Key Details -->
+                    <div class="lg:col-span-7 flex flex-col justify-between space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Pros block -->
+                            <div class="p-5 bg-teal-50/50 rounded-2xl border border-teal-100/50 space-y-3">
+                                <h5 class="text-sm font-bold text-teal-900 flex items-center gap-1.5">
+                                    <span class="p-1 bg-teal-100 text-teal-800 rounded-full text-xs">?</span>
+                                    이런 점은 정말 좋습니다 (장점)
+                                </h5>
+                                <ul id="list-pros" class="text-xs text-slate-700 space-y-2 list-disc pl-4 leading-relaxed">
+                                    <li>입원의료비 전액(100%)을 면책금 없이 보장합니다.</li>
+                                    <li>통원 시 약제비와 진료비를 합해 하루 5,000원 공제 후 전액 보상합니다.</li>
+                                    <li>가장 좋은 점은 재가입 주기가 없어 만기까지 보장 조건이 유지됩니다.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Cons block -->
+                            <div class="p-5 bg-rose-50/50 rounded-2xl border border-rose-100/50 space-y-3">
+                                <h5 class="text-sm font-bold text-rose-900 flex items-center gap-1.5">
+                                    <span class="p-1 bg-rose-100 text-rose-800 rounded-full text-xs">?</span>
+                                    이런 치명적인 단점이 있습니다
+                                </h5>
+                                <ul id="list-cons" class="text-xs text-slate-700 space-y-2 list-disc pl-4 leading-relaxed">
+                                    <li>손해율 증가 분담으로 인해 갱신 시 보험료가 기하급수적으로 폭증합니다.</li>
+                                    <li>일부 가입자의 무분별한 과잉 의료비 남용 리스크가 고스란히 본인 갱신료로 전가됩니다.</li>
+                                    <li>장기 은퇴 설계 단계에서 가장 먼저 경제적 지출 부담 위협 요인이 됩니다.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Core Features Deep-dive table within tab -->
+                        <div class="border border-slate-100 rounded-2xl overflow-hidden text-xs bg-slate-50">
+                            <div class="bg-slate-200/50 px-4 py-2 font-bold text-slate-700 border-b border-slate-100">
+                                주요 특약별 보장 규정
+                            </div>
+                            <div class="grid grid-cols-3 divide-x divide-slate-100 p-4 gap-4 text-center">
+                                <div class="space-y-1">
+                                    <span class="block text-[10px] text-slate-400 font-bold uppercase">비급여 도수치료</span>
+                                    <p id="feature-chiro" class="font-semibold text-slate-800 text-xs">제한 없음 / 100% 보장</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="block text-[10px] text-slate-400 font-bold uppercase">비급여 영양수액</span>
+                                    <p id="feature-injection" class="font-semibold text-slate-800 text-xs">제한 없음 / 100% 보장</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="block text-[10px] text-slate-400 font-bold uppercase">임신 및 출산 급여</span>
+                                    <p id="feature-maternity" class="font-semibold text-rose-600 text-xs">보장 전면 제외</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRINT ONLY: Sequential Generation Manual (Visually stunning on A4 paper) -->
+        <section class="print-only space-y-8">
+            <h3 class="text-xl font-bold text-slate-900 border-l-4 border-blue-900 pl-2">1. 세대별 특징 및 장단점 세부 대조 자료</h3>
+
+            <!-- 1세대 Print Card -->
+            <div class="print-card">
+                <div class="flex justify-between items-center border-b pb-2 mb-3">
+                    <h4 class="text-lg font-bold text-slate-900">■ 1세대 실손의료보험 (구실손)</h4>
+                    <span class="text-xs font-semibold text-slate-500">~ 2009년 9월 가입</span>
+                </div>
+                <p class="text-sm text-rose-600 font-bold mb-2">"보장은 천국, 보험료는 갱신 폭탄"</p>
+                <p class="text-xs text-slate-600 mb-3">병원비 환급 면에서는 극상의 효율을 제공하지만 손해율 누적으로 은퇴자 경제에 심각한 타격을 안겨주는 주원인입니다.</p>
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <strong class="text-teal-800 block mb-1">? 핵심 장점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>입원의료비 전액(100%)을 면책금 없이 보장합니다.</li>
+                            <li>통원 치료 시 하루 단 5,000원 공제 후 약제비 및 진료비를 전액 지급합니다.</li>
+                            <li>재가입 주기가 없어 만기까지 보장 약관 조항이 절대 바뀌지 않습니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong class="text-rose-800 block mb-1">? 주요 단점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>과잉 의료 쇼핑 가입자의 손해율이 나머지 건강한 가입자의 갱신료로 100% 전가됩니다.</li>
+                            <li>나이가 들수록 월 납부액이 수십만 원 이상으로 기하급수적으로 폭증합니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2세대 Print Card -->
+            <div class="print-card">
+                <div class="flex justify-between items-center border-b pb-2 mb-3">
+                    <h4 class="text-lg font-bold text-slate-900">■ 2세대 실손의료보험 (표준화)</h4>
+                    <span class="text-xs font-semibold text-slate-500">2009년 10월 ~ 2017년 3월 가입</span>
+                </div>
+                <p class="text-sm text-amber-600 font-bold mb-2">"자기부담금 10~20% 도입, 누적된 갱신 압박"</p>
+                <p class="text-xs text-slate-600 mb-3">보험사들의 기준을 통일한 표준 규격을 적용받으며 균형감을 노렸으나 비급여 통제가 여전히 미흡한 세대입니다.</p>
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <strong class="text-teal-800 block mb-1">? 핵심 장점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>1세대에 비해 월 고정 기본 보험료가 상대적으로 저렴하게 조정되었습니다.</li>
+                            <li>통원비 및 약제비의 80~90%에 달하는 높은 환급 비율을 유지하여 체감 성능이 뛰어납니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong class="text-rose-800 block mb-1">? 주요 단점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>도수치료나 비급여 영양수액 과다 청구로 인한 보험료 인상 리스크가 여전합니다.</li>
+                            <li>2013년 4월 이후 가입자는 15년 주기 강제 재가입 대상에 편입됩니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3세대 Print Card (Forces page break before 3rd gen to look clean) -->
+            <div class="print-card page-break">
+                <div class="flex justify-between items-center border-b pb-2 mb-3">
+                    <h4 class="text-lg font-bold text-slate-900">■ 3세대 실손의료보험 (착한실손)</h4>
+                    <span class="text-xs font-semibold text-slate-500">2017년 4월 ~ 2021년 6월 가입</span>
+                </div>
+                <p class="text-sm text-blue-600 font-bold mb-2">"착한 가격, 3대 비급여 자기부담 30% 분리"</p>
+                <p class="text-xs text-slate-600 mb-3">남용되기 쉬운 대표적인 3대 비급여 치료를 아예 특약으로 분리하여 보험료 상승률을 안정화했습니다.</p>
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <strong class="text-teal-800 block mb-1">? 핵심 장점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>기존 세대 대비 월 보험료가 절반 가까이 저렴하여 평상시 지출 부담이 적습니다.</li>
+                            <li>2년 연속 비급여 청구를 안 할 시 다음 해 즉시 10% 할인을 적용받습니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong class="text-rose-800 block mb-1">? 주요 단점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>도수치료, 비급여 주사, MRI 특약의 자기부담률이 30%로 기존보다 상향되었습니다.</li>
+                            <li>특약 비급여 치료의 연간 지급 횟수와 한도 금액이 제한되기 시작했습니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4세대 Print Card -->
+            <div class="print-card">
+                <div class="flex justify-between items-center border-b pb-2 mb-3">
+                    <h4 class="text-lg font-bold text-slate-900">■ 4세대 실손의료보험 (차등제)</h4>
+                    <span class="text-xs font-semibold text-slate-500">2021년 7월 ~ 2026년 5월 가입</span>
+                </div>
+                <p class="text-sm text-teal-600 font-bold mb-2">"개인별 비급여 보험 청구액 비례 할인 및 할증제"</p>
+                <p class="text-xs text-slate-600 mb-3">기존 가입자들의 연대 책임 문제를 해결하기 위해, 비급여를 많이 청구한 가입자 본인의 요율만 집중 할증합니다.</p>
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <strong class="text-teal-800 block mb-1">? 핵심 장점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>1세대 대비 최대 70%가량 저렴하여 고정 기본 유지비가 극히 미미합니다.</li>
+                            <li>비급여 청구 내역이 전혀 없는 가입자는 매달 지속 할인을 적용받습니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong class="text-rose-800 block mb-1">? 주요 단점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>연간 비급여 치료비 지급액이 100만 원 초과 시 최대 300%까지 할증 페널티가 붙습니다.</li>
+                            <li>재가입 주기가 5년으로 축소되어 조건 변동성이 한층 더 가속화되었습니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5세대 Print Card -->
+            <div class="print-card">
+                <div class="flex justify-between items-center border-b pb-2 mb-3">
+                    <h4 class="text-lg font-bold text-slate-900">■ 5세대 실손의료보험 (최신 개정 필수형)</h4>
+                    <span class="text-xs font-semibold text-teal-600">2026년 5월 6일 출시 ~ 현재</span>
+                </div>
+                <p class="text-sm text-indigo-700 font-bold mb-2">"임신·출산 급여 신설, 중증 질환 상한선 도입, 과잉 비중증 비급여 제어"</p>
+                <p class="text-xs text-slate-600 mb-3">도덕적 해이가 극심했던 비비급여 영역은 자기부담금을 강력하게 상향하되, 진짜 치료가 필요한 중증 및 임신/출산 의료 영역은 대폭 밀착 보장하는 최첨단 현대 실손입니다.</p>
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <strong class="text-teal-800 block mb-1">? 핵심 장점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>실손 사상 최초로 '임신·출산'과 소아 발달장애의 급여 의료비를 공식적으로 편입 보장합니다.</li>
+                            <li>암, 심장수술 등 고액 비급여 치료 시 연간 본인 부담 한도(최고 500만 원) 제도를 마련했습니다.</li>
+                            <li>기본 고정 보험료가 4세대보다도 추가로 30~50% 더 저렴합니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong class="text-rose-800 block mb-1">? 주요 단점:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>도수치료, 마늘주사 등 비중증 치료의 본인 부담율이 50%까지 대폭 제한됩니다.</li>
+                            <li>비중증 비급여의 연간 수령 최고 한도액이 기존 5,000만 원에서 1,000만 원으로 토막 났습니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Matrix Table Section (Perfect for page 3/4) -->
+        <section class="space-y-6 page-break">
+            <h3 class="text-xl font-bold text-slate-900 border-l-4 border-blue-900 pl-2">2. 세대별 핵심 기능 비교 매트릭스</h3>
+
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr class="bg-slate-900 text-white text-xs font-bold">
+                                <th class="p-4 w-48">비교 항목</th>
+                                <th class="p-4 text-center">1세대 (구실손)</th>
+                                <th class="p-4 text-center">2세대 (표준화)</th>
+                                <th class="p-4 text-center">3세대 (착한실손)</th>
+                                <th class="p-4 text-center">4세대 (차등제)</th>
+                                <th class="p-4 text-center bg-blue-950 text-teal-400">5세대 (최신개정)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+                            <!-- Period Row -->
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-900 bg-slate-50">가입 시기</td>
+                                <td class="p-4 text-center">~ 2009년 9월</td>
+                                <td class="p-4 text-center">2009.10 ~ 2017.03</td>
+                                <td class="p-4 text-center">2017.04 ~ 2021.06</td>
+                                <td class="p-4 text-center">2021.07 ~ 2026.05</td>
+                                <td class="p-4 text-center font-bold text-blue-900">2026년 5월 ~ 현재</td>
+                            </tr>
+                            <!-- Self-pay Row -->
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-900 bg-slate-50">자기부담률</td>
+                                <td class="p-4 text-center text-teal-600 font-bold">없음 ~ 10%</td>
+                                <td class="p-4 text-center">10% 또는 20%</td>
+                                <td class="p-4 text-center">급여 10~20% / 비급여 30%</td>
+                                <td class="p-4 text-center">급여 20% / 비급여 30%</td>
+                                <td class="p-4 text-center font-bold text-blue-900">
+                                    급여 20% <br>
+                                    <span class="text-rose-600 text-[10px]">비중증 비급여 50%</span>
+                                </td>
+                            </tr>
+                            <!-- Re-signup Row -->
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-900 bg-slate-50">재가입 주기</td>
+                                <td class="p-4 text-center text-teal-600 font-bold">없음 (종신형)</td>
+                                <td class="p-4 text-center">없음 (일부 15년)</td>
+                                <td class="p-4 text-center">15년</td>
+                                <td class="p-4 text-center">5년</td>
+                                <td class="p-4 text-center font-bold text-blue-900">5년</td>
+                            </tr>
+                            <!-- Premium Level -->
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-900 bg-slate-50">기본 보험료 가격대</td>
+                                <td class="p-4 text-center text-rose-600 font-bold">매우 비쌈 (100)</td>
+                                <td class="p-4 text-center text-amber-600">비쌈 (70)</td>
+                                <td class="p-4 text-center">보통 (50)</td>
+                                <td class="p-4 text-center text-teal-600">저렴함 (30)</td>
+                                <td class="p-4 text-center font-bold text-teal-600">최저 수준 (15~20)</td>
+                            </tr>
+                            <!-- Non-pay differential -->
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-900 bg-slate-50">개인별 비급여 차등제</td>
+                                <td class="p-4 text-center">없음</td>
+                                <td class="p-4 text-center">없음</td>
+                                <td class="p-4 text-center">없음</td>
+                                <td class="p-4 text-center font-bold">비급여 전체 청구량 연동</td>
+                                <td class="p-4 text-center font-bold text-blue-900">비중증 비급여 이용만 연동</td>
+                            </tr>
+                            <!-- Maternity coverage -->
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-900 bg-slate-50">임신·출산 보장</td>
+                                <td class="p-4 text-center text-rose-500">제외</td>
+                                <td class="p-4 text-center text-rose-500">제외</td>
+                                <td class="p-4 text-center text-rose-500">제외</td>
+                                <td class="p-4 text-center text-rose-500">제외</td>
+                                <td class="p-4 text-center font-bold text-teal-600">급여 부분 포함 (신설)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Breakdown of 5th Gen Policy Changes -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 page-break">
+            <div class="bg-gradient-to-br from-blue-900 to-indigo-950 text-white rounded-3xl p-6 shadow-xl space-y-4 print-card">
+                <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-teal-400 font-bold text-xl no-print">01</div>
+                <h4 class="text-lg font-black text-slate-900 print:text-slate-900">비급여 이원화 신설</h4>
+                <p class="text-xs text-slate-300 print:text-slate-600 leading-relaxed">
+                    필수 중증치료(암·심장질환 등)에 드는 비급여는 자기부담금 기존 수준(30%)을 보장하고 할증을 면제합니다. 
+                    반면 도수치료, 비급여 영양 주사제 등 비중증 비급여는 자기부담금 비율을 <span class="text-teal-300 print:text-teal-600 font-bold">50%로 인상</span>하여 도덕적 해이를 강력 차단합니다.
+                </p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl p-6 shadow-xl space-y-4 border border-slate-800 print-card">
+                <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-teal-400 font-bold text-xl no-print">02</div>
+                <h4 class="text-lg font-black text-slate-900 print:text-slate-900">중증 환자 상한선 (500만 원)</h4>
+                <p class="text-xs text-slate-300 print:text-slate-600 leading-relaxed">
+                    실손보험료를 낮추는 대신 중증 환자가 대학병원급(상급종합병원)에서 비급여 고액 치료를 받을 때 
+                    연간 본인이 직접 부담해야 하는 총액 상한선을 <span class="text-teal-300 print:text-teal-600 font-bold">최대 500만 원으로 제한</span>하여 실질적인 사회 안전망을 설계했습니다.
+                </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-950 to-indigo-950 text-white rounded-3xl p-6 shadow-xl space-y-4 print-card">
+                <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-teal-400 font-bold text-xl no-print">03</div>
+                <h4 class="text-lg font-black text-slate-900 print:text-slate-900">저출생 대응 급여 신설</h4>
+                <p class="text-xs text-slate-300 print:text-slate-600 leading-relaxed">
+                    역대 어떤 실손의료보험에서도 한 번도 적용되지 않았던 <span class="text-teal-300 print:text-teal-600 font-bold">임신·출산 관련 급여 의료비</span>와 영유아기 아동 발달장애 관련 급여 의료비를 새롭게 보장 범위에 포함했습니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- Interactive Decision Tool (Quiz Simulator - Hidden in Print) -->
+        <section id="advisor-section" class="bg-white rounded-3xl border border-slate-100 shadow-xl p-6 sm:p-8 space-y-8 no-print">
+            <div class="text-center max-w-xl mx-auto space-y-2">
+                <span class="bg-blue-100 text-blue-800 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">자가 진단 솔루션</span>
+                <h3 class="text-2xl font-black text-slate-900 tracking-tight">유지 vs 전환 1분 스마트 자가진단</h3>
+                <p class="text-slate-500 text-sm">현재 본인의 경제 상황과 건강 지표를 입력해 전문가의 가이드 추천을 간편하게 확인해보세요.</p>
+            </div>
+
+            <!-- Quiz Main Body -->
+            <div id="quiz-container" class="max-w-2xl mx-auto bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-6">
+                <!-- Question 1 -->
+                <div class="question-step block space-y-3" id="q-step-1">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                        <span>QUESTION 1 OF 4</span>
+                        <span>25% 완료</span>
+                    </div>
+                    <h4 class="text-base font-extrabold text-slate-900">Q1. 평소 비급여 치료(도수치료, 비급여 도수/주사/MRI 등)를 받는 빈도가 얼마나 되나요?</h4>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="answerQuestion(1, 'A')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>매년 10회 이상 지속적으로 치료받아야 몸 상태가 유지된다. (매우 빈번)</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                        <button onclick="answerQuestion(1, 'B')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>가끔 감기나 소소한 타박상, 건강검진을 제외하면 거의 받지 않는다. (보통/가끔)</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                        <button onclick="answerQuestion(1, 'C')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>병원을 아예 거의 가지 않는다. (무사고에 가까움)</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="question-step hidden space-y-3" id="q-step-2">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                        <span>QUESTION 2 OF 4</span>
+                        <span>50% 완료</span>
+                    </div>
+                    <h4 class="text-base font-extrabold text-slate-900">Q2. 매월 납부하는 갱신형 실손보험의 월 납입 금액이 부담스러우신가요?</h4>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="answerQuestion(2, 'A')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>매우 큰 부담이다. 은퇴 후나 가계 경제를 위해 필히 고정 비용 지출을 최소화하고 싶다.</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                        <button onclick="answerQuestion(2, 'B')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>보장만 완벽하다면 월 10~20만 원 상당의 고정 지출료는 부담 없이 충분히 납입 가능하다.</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="question-step hidden space-y-3" id="q-step-3">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                        <span>QUESTION 3 OF 4</span>
+                        <span>75% 완료</span>
+                    </div>
+                    <h4 class="text-base font-extrabold text-slate-900">Q3. 현재 만성 기저질환(당뇨, 혈압 등)이 있거나, 암이나 뇌혈관 등 중증 질환 치료 이력 혹은 우려가 있습니까?</h4>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="answerQuestion(3, 'A')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>예, 현재 장기 처방이나 지병이 있으며 향후 대형병원 입원 치료 가능성이 다분하다.</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                        <button onclick="answerQuestion(3, 'B')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>아니오, 현재 매우 건강하며 중증 질환에 대한 가족력이나 병원 예약 이력도 없다.</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="question-step hidden space-y-3" id="q-step-4">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                        <span>QUESTION 4 OF 4</span>
+                        <span>100% 완료</span>
+                    </div>
+                    <h4 class="text-base font-extrabold text-slate-900">Q4. 향후 자녀 계획이 있는 신혼부부 혹은 어린 자녀의 소아기 발달장애 보장이 필요합니까?</h4>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="answerQuestion(4, 'A')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>예, 임신·출산 준비 및 소아기 아동 발달 급여 보장을 적극 활용해 혜택을 받고 싶다.</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                        <button onclick="answerQuestion(4, 'B')" class="p-4 bg-white hover:bg-blue-50 text-left rounded-xl border border-slate-200 hover:border-blue-300 font-semibold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between">
+                            <span>아니오, 해당 보장 요구사항은 없거나 이미 육아 시기를 완벽히 건너뛰었다.</span>
+                            <span class="text-slate-300">?</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Result Screen -->
+                <div class="question-step hidden space-y-6 text-center" id="q-step-result">
+                    <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 text-2xl font-black">
+                        ??
+                    </div>
+                    <div class="space-y-2">
+                        <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full">자가진단 매칭 결과</span>
+                        <h4 id="result-title" class="text-2xl font-black text-slate-900">안정적 "기존 1·2세대 실손 유지" 권장</h4>
+                        <p id="result-description" class="text-slate-600 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
+                            병원 정기 진료 횟수가 높고 기저 질환 치료를 꾸준히 받고 계시기 때문에 보험료 상승 한도를 극복하더라도 기존 세대 계약 조건을 보존하는 것이 장기적으로 훨씬 유리합니다.
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-amber-50 rounded-xl border border-amber-100 text-xs text-amber-800 text-left space-y-1.5 max-w-md mx-auto">
+                        <span class="font-bold">?? 전문가의 핵심 Advice:</span>
+                        <p id="result-advice">소득 수준에 여유가 있다면 보장 100%를 고수하는 편이 훨씬 경제적입니다. 불필요한 해지는 절대 권하지 않습니다.</p>
+                    </div>
+
+                    <div class="pt-4 flex justify-center gap-2">
+                        <button onclick="resetQuiz()" class="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition">
+                            처음부터 다시 진단
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Policy & Info Alert -->
+        <section class="bg-amber-50 border border-amber-100 rounded-2xl p-5 flex gap-4 text-xs text-amber-800 leading-relaxed page-break">
+            <span class="text-xl">??</span>
+            <div>
+                <span class="font-bold block text-sm text-amber-900">2026년 계약 전환 특별 할인 프로모션 한시 운영 예고</span>
+                <p class="mt-1">
+                    정부와 주요 손해보험사들은 기존 1, 2세대 가입자가 최신 5세대 실손의료보험으로 자발적 계약 전환을 유도하기 위해, 
+                    <strong>2026년 11월부터 단 6개월간</strong> 특별 신청 프로모션을 진행할 계획입니다. 
+                    이 시기에 전환을 확정하면 <strong>향후 3년간 매달 납입하는 5세대 보험료를 무려 50% 감면</strong>받을 수 있으므로 전환을 고려한다면 일정 체크를 권유합니다.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Page Footer (Hidden in print) -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+            <p class="font-bold text-slate-300">ⓒ 2026 금융소비자 가이드 정보 포털. All rights reserved.</p>
+            <p class="max-w-xl mx-auto opacity-75 leading-relaxed">
+                본 웹페이지의 정보는 소비자 편의를 돕기 위해 종합 비교하여 요약한 참고 자료입니다. 실제 세부 보장 범위, 한도액, 갱신 주기 및 할증 요건은 개별 가입 보험사의 약관과 정책에 따라 상이할 수 있으므로 최종 결정 시에는 해당 보험사의 공식 약관을 필히 재확인하시기 바랍니다.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification for Clipboards -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-2xl border border-slate-800 transition-all duration-300 translate-y-20 opacity-0 pointer-events-none flex items-center gap-2 no-print">
+        <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-message">클립보드에 공유 링크가 복사되었습니다.</span>
+    </div>
+
+    <script>
+        // Data Structure for Generation Analysis Tabs
+        const generationData = {
+            1: {
+                badgeName: "1세대 (구실손)",
+                period: "~ 2009년 9월 가입",
+                title: "무한 보장과 무한 갱신의 시대",
+                oneLiner: '"보장은 천국, 보험료는 갱신 폭탄"',
+                premiumLabel: "최대 수준 (100)",
+                premiumBar: "100%",
+                coverageLabel: "100% 전액 보장",
+                coverageBar: "100%",
+                retentionLabel: "매우 위험 (전환 적극 권장)",
+                retentionBar: "15%",
+                expertOpinion: "만성 기저질환이나 연 10회 이상 물리치료(도수치료 등)를 꾸준히 받으시는 상황이 아니라면, 나이가 들수록 매월 수십만 원 이상으로 폭증하는 보험료 감당이 불가하여 결국 5세대로의 특별 전환 프로모션을 활용해 갈아타는 것을 적극 권장해 드립니다.",
+                pros: [
+                    "입원 치료 시 내가 직접 부담해야 하는 금액이 0%로 완벽한 입원 보장을 자랑합니다.",
+                    "통원 치료 시 일체의 한계 비용이나 특약 제한 없이 일당 5,000원 공제 후 약값과 진료비를 전액 환급합니다.",
+                    "재가입 주기가 아예 존재하지 않아 만기(80~100세)까지 보험의 기본 약관 조건이 강제로 절대 바뀌지 않습니다."
+                ],
+                cons: [
+                    "일부 비양심적 이용자의 비급여 과잉 진료 손해율이 전체 가입자의 연간 갱신료 부담으로 분배되어 전가됩니다.",
+                    "가입 연령층이 고령으로 진입할수록 갱신 시점의 보험료 청구 인상률이 극심하게 올라가 가계 고정비 부담을 야기합니다."
+                ],
+                chiro: "횟수/한도 제한 없음 (100%)",
+                injection: "한도 제한 없음 (100% 보장)",
+                maternity: "보장 전면 제외"
+            },
+            2: {
+                badgeName: "2세대 (표준화)",
+                period: "2009년 10월 ~ 2017년 3월 가입",
+                title: "가이드 표준화 및 균형의 모색",
+                oneLiner: '"자기부담금 10~20% 신설, 여전한 갱신 부담"',
+                premiumLabel: "높음 (70)",
+                premiumBar: "70%",
+                coverageLabel: "80% ~ 90% 보장",
+                coverageBar: "85%",
+                retentionLabel: "보통 (상태 따라 대조)",
+                retentionBar: "45%",
+                expertOpinion: "보장률이 80~90% 수준으로 합리적이며, 2013년 3월 이전 가입자의 경우 재가입 주기가 없어 유지 조건이 우수한 편에 속합니다. 단, 비급여 도수치료 및 영양 주사 보장으로 인한 손해 누적으로 갱신료 동반 인상 리스크가 매년 존재합니다.",
+                pros: [
+                    "1세대에 비해 초기 설정된 월 기본 보험료가 합리적인 범위 내에서 조율되어 저렴했습니다.",
+                    "여전히 통원비 및 약제비의 80~90%에 달하는 고율의 환급율을 적용하여 체감 보장 성능이 뛰어납니다."
+                ],
+                cons: [
+                    "도수치료, 체외충격파 등 신설 특약 영역에 대한 가입자 남용으로 인해 손해율이 동반 급등하고 있습니다.",
+                    "2013년 4월 이후 가입자는 15년 단위 재가입 주기가 강제 부과되어 추후 가입 조건이 강제 재조정됩니다."
+                ],
+                chiro: "공제 후 80%~90% 보장",
+                injection: "공제 후 80%~90% 보장",
+                maternity: "보장 전면 제외"
+            },
+            3: {
+                badgeName: "3세대 (착한실손)",
+                period: "2017년 4월 ~ 2021년 6월 가입",
+                title: "과잉진료 3대 비급여 특약 분리",
+                oneLiner: '"착한 가격, 3대 비급여 자기부담 30% 격리"',
+                premiumLabel: "보통 수준 (50)",
+                premiumBar: "50%",
+                coverageLabel: "급여 80-90% / 특약 70%",
+                coverageBar: "70%",
+                retentionLabel: "높음 (안정적 유지 최적)",
+                retentionBar: "75%",
+                expertOpinion: "3대 도수치료, 비급여 영양제 주사, MRI 등을 별도 특약으로 완전히 분리해 두어 1, 2세대에 비해 고정 갱신료 인상률 방어력이 대단히 훌륭합니다. 질병 청구 건수가 아주 미미한 평범한 가입자라면 만기 15년 전까지는 끝까지 유지하는 것이 정답입니다.",
+                pros: [
+                    "기존 1, 2세대 대비 기본 고정 월 보험료가 절반에 가깝게 대폭 저렴해졌습니다.",
+                    "직전 2년간 비급여 보험 청구를 전혀 하지 않았을 시 이듬해 고정 보험료를 즉시 10% 추가 할인해 줍니다."
+                ],
+                cons: [
+                    "도수치료, 주사제, MRI 등의 특약 자기부담 비율이 30%로 대폭 상향 적용되었습니다.",
+                    "특약 비급여 치료에 대한 연간 지급 횟수(최대 50회)와 보장 금액 한도 규정이 촘촘하게 적용됩니다."
+                ],
+                chiro: "연간 최대 50회 / 350만 한도",
+                injection: "연간 최대 50회 / 250만 한도",
+                maternity: "보장 전면 제외"
+            },
+            4: {
+                badgeName: "4세대 (차등제)",
+                period: "2021년 7월 ~ 2026년 5월 가입",
+                title: "비급여 쓰면 더 내는 차등 요금제",
+                oneLiner: '"개인별 맞춤 할인/할증 책임제 실손"',
+                premiumLabel: "저렴함 (30)",
+                premiumBar: "30%",
+                coverageLabel: "급여 80% / 비급여 70%",
+                coverageBar: "55%",
+                retentionLabel: "보통 (건강한 사람용)",
+                retentionBar: "60%",
+                expertOpinion: "이전 1~3세대와 달리 본인이 비급여 치료(특히 도수치료 등)를 청구하지 않으면 오히려 추가 할인을 받고, 일정 액수 이상(연 100만 원 이상) 과다 청구 시엔 최대 300%까지 비급여 보험료가 할증되는 완전 책임형 모델입니다. 병원을 잘 가지 않는 젊은 층에 매우 유리합니다.",
+                pros: [
+                    "1세대 구실손 대비 고정 기본료가 약 70% 가까이 저렴하여 고정 통신비만큼 부담이 적습니다.",
+                    "비급여 청구 총액이 전혀 없으면 기본 연동 할인 혜택으로 유지 비용이 추가 경감됩니다."
+                ],
+                cons: [
+                    "연간 비급여 치료비 지급액이 100만 원 이상일 시 최대 3배(300%)까지 보험료 할증 페널티가 즉각 부과됩니다.",
+                    "재가입 주기가 5년으로 대폭 단축되어 정부 정책과 기금 환경 변화에 따라 약관이 빠르게 개편될 수 있습니다."
+                ],
+                chiro: "연간 50회 한도 / 자기부담 30%",
+                injection: "치료 목적만 보장 / 자기부담 30%",
+                maternity: "보장 전면 제외"
+            },
+            5: {
+                badgeName: "5세대 (최신 개정 필수형)",
+                period: "2026년 5월 ~ 현재 가입 가능",
+                title: "필수의료 강화 및 비중증 장벽 설계",
+                oneLiner: '"임신·출산 보장 신설, 도수치료 부담 상향"',
+                premiumLabel: "가장 저렴 (15~20)",
+                premiumBar: "15%",
+                coverageLabel: "필수 중증 70-80% / 비중증 50%",
+                coverageBar: "50%",
+                retentionLabel: "매우 우수 (전환 적극 검토)",
+                retentionBar: "95%",
+                expertOpinion: "2026년 대규모 구조 변화를 거쳐 도입된 신개념 실손입니다. 기본 보험료는 역대 최저 수준으로 낮추고, 임신·출산 급여 보장을 새롭게 열었습니다. 암 등 중증 치료 시 500만 원 부담 상한선을 제공해 큰 병 대비책을 두텁게 한 대신, 비급여 도수치료 및 주사제는 자기부담율을 50%로 대폭 제한하여 도덕적 과잉을 차단했습니다.",
+                pros: [
+                    "역대 모든 세대 중 기본 월 부담료가 가장 저렴하여 은퇴 설계에도 지출 걱정이 거의 없습니다.",
+                    "실손 사상 최초로 임신·출산 및 영유아 아동의 발달장애 관련 급여 의료비 전액 보장이 도입되었습니다.",
+                    "대학병원급 중증 입원 수술 시, 연간 본인 비급여 직접 부담 최고액을 500만 원으로 강력 제어합니다."
+                ],
+                cons: [
+                    "도수치료, 영양수액 등 비중증 비급여 자부담이 50%로 상향되어 실질 도수치료 체감 혜택이 반토막 납니다.",
+                    "비중증 비급여의 연간 수령 한도가 기존 5,000만 원에서 1,000만 원으로 대폭 하향 적용되었습니다."
+                ],
+                chiro: "자기부담 50% / 연 최대 1천만 원 한도",
+                injection: "자기부담 50% / 치료 목적만 허용",
+                maternity: "급여 항목 한도 내 전액 보상 (신설)"
+            }
+        };
+
+        // Tab click behavior
+        function selectGeneration(genNum) {
+            // Update Tab active state stylings
+            for (let i = 1; i <= 5; i++) {
+                const tab = document.getElementById(`tab-gen-${i}`);
+                if (i === genNum) {
+                    tab.className = "py-3 px-1 sm:px-4 rounded-xl text-center font-bold text-xs sm:text-sm transition-all duration-200 shadow-sm bg-white text-slate-900 scale-100";
+                } else {
+                    tab.className = "py-3 px-1 sm:px-4 rounded-xl text-center font-bold text-xs sm:text-sm transition-all duration-200 text-slate-600 hover:text-slate-900";
+                }
+            }
+
+            // Get selected data
+            const data = generationData[genNum];
+
+            // Render Dynamic values with safe text injection
+            document.getElementById('gen-badge-name').textContent = data.badgeName;
+            document.getElementById('gen-badge-period').textContent = data.period;
+            document.getElementById('gen-title').textContent = data.title;
+            document.getElementById('gen-one-liner').textContent = data.oneLiner;
+            
+            // Adjust label texts
+            document.getElementById('stat-premium-label').textContent = data.premiumLabel;
+            document.getElementById('stat-coverage-label').textContent = data.coverageLabel;
+            document.getElementById('stat-retention-label').textContent = data.retentionLabel;
+
+            // Change bar colors dynamically based on generation
+            const premBar = document.getElementById('stat-premium-bar');
+            premBar.style.width = data.premiumBar;
+            if (genNum <= 2) {
+                premBar.className = "bg-rose-500 h-2.5 rounded-full transition-all duration-500";
+                document.getElementById('stat-premium-label').className = "text-rose-600";
+            } else if (genNum === 3) {
+                premBar.className = "bg-amber-500 h-2.5 rounded-full transition-all duration-500";
+                document.getElementById('stat-premium-label').className = "text-amber-600";
+            } else {
+                premBar.className = "bg-teal-500 h-2.5 rounded-full transition-all duration-500";
+                document.getElementById('stat-premium-label').className = "text-teal-600";
+            }
+
+            document.getElementById('stat-coverage-bar').style.width = data.coverageBar;
+            document.getElementById('stat-retention-bar').style.width = data.retentionBar;
+            document.getElementById('expert-opinion').textContent = data.expertOpinion;
+
+            // Render Pros List
+            const prosList = document.getElementById('list-pros');
+            prosList.innerHTML = '';
+            data.pros.forEach(pro => {
+                const li = document.createElement('li');
+                li.textContent = pro;
+                prosList.appendChild(li);
+            });
+
+            // Render Cons List
+            const consList = document.getElementById('list-cons');
+            consList.innerHTML = '';
+            data.cons.forEach(con => {
+                const li = document.createElement('li');
+                li.textContent = con;
+                consList.appendChild(li);
+            });
+
+            // Mini detail labels
+            document.getElementById('feature-chiro').textContent = data.chiro;
+            document.getElementById('feature-injection').textContent = data.injection;
+            document.getElementById('feature-maternity').textContent = data.maternity;
+            
+            // Text color adjustments for maternity warning
+            if (genNum === 5) {
+                document.getElementById('feature-maternity').className = "font-semibold text-teal-600 text-xs";
+            } else {
+                document.getElementById('feature-maternity').className = "font-semibold text-rose-600 text-xs";
+            }
+        }
+
+        // Simple state holder for user answers
+        let quizAnswers = {
+            1: null,
+            2: null,
+            3: null,
+            4: null
+        };
+
+        function answerQuestion(stepNum, answer) {
+            quizAnswers[stepNum] = answer;
+            
+            // Hide current step
+            document.getElementById(`q-step-${stepNum}`).classList.add('hidden');
+
+            // Show next step or evaluate result
+            if (stepNum < 4) {
+                document.getElementById(`q-step-${stepNum + 1}`).classList.remove('hidden');
+            } else {
+                calculateAdvisorResult();
+            }
+        }
+
+        function calculateAdvisorResult() {
+            const r1 = quizAnswers[1]; // Hospital frequency
+            const r2 = quizAnswers[2]; // Premium pressure
+            const r3 = quizAnswers[3]; // Chronic / severe illness
+            const r4 = quizAnswers[4]; // Pregnancy plan
+
+            let resultTitle = "";
+            let resultDesc = "";
+            let resultAdvice = "";
+
+            // Logical matching conditions
+            if (r3 === 'A' || (r1 === 'A' && r2 === 'B')) {
+                // High medical utilization, not overly worried about premium
+                resultTitle = '안정적 "기존 1·2세대 실손 유지" 적극 권장';
+                resultDesc = '현재 기저 질환이 있거나 도수치료 등 비급여 치료 청구 빈도가 대단히 높습니다. 이런 상황에서 저렴하다는 이유로 성급하게 4·5세대로 갈아타면 실제 부담하는 치료비 비율이 대폭 상승하여 오히려 총지출이 가중됩니다. 높은 갱신료를 내더라도 유지하는 편이 경제적 이득입니다.';
+                resultAdvice = '월 10~20만 원의 고정 보험료 납입 여력이 남아있다면 보장률 100%에 가까운 구실손을 지켜내시는 것이 재테크 측면에서도 장기적으로 유리합니다.';
+            } else if (r4 === 'A') {
+                // Has pregnancy plan -> Recommend Gen 5 (Maternity benefits)
+                resultTitle = '출산·보육 특화 "최신 5세대 전환" 최적 부합';
+                resultDesc = '향후 1~2년 이내 자녀 계획이 있으시다면 기존 모든 세대에서 보장하지 않는 임신·출산 급여 보장을 누리실 수 있는 최신 5세대로의 특별 전환을 추천드립니다. 출산 및 육아 단계에서 발생하는 다양한 본인부담 치료비를 효과적으로 환급받을 수 있습니다.';
+                resultAdvice = '2026년 11월 프로모션 시작 시 전환을 신청하여 3년간 50%의 납입금 특별 감면 혜택까지 더하여 활용하시는 것이 경제적입니다.';
+            } else if (r2 === 'A') {
+                // High premium pressure -> Suggest Switch to Gen 5
+                resultTitle = '지출 긴축형 "최신 5세대 전환" 강력 추천';
+                resultDesc = '현재 건강 상태가 대체로 양호하시고 병원을 연간 1~2회만 방문하시는 상황에서 매월 높은 구세대 보험료를 지불하고 계십니다. 5세대로 전환 시 기존 보험료 대비 최대 50~70% 상당의 고정비가 즉각 절감되어 통신비 이상의 은퇴 자금 보호 장벽을 세울 수 있습니다.';
+                resultAdvice = '가장 최근 출시된 5세대는 4세대보다도 기본료가 낮으며 암과 같은 초고액 질병 치료 시 연간 500만 원만 부담하면 되는 완충 고리가 있으므로 걱정 없이 전향해 보셔도 좋습니다.';
+            } else {
+                // Otherwise normal healthy case
+                resultTitle = '스마트 유지형 "3세대 착한 실손 유지" 권장';
+                resultDesc = '평소 청구 이력이 낮고 건강 상태도 준수하지만 기존 보험료가 엄청난 무리를 동반하지 않고 있습니다. 특히 만약 3세대 가입자이시라면 이미 갱신 방어율이 대단히 좋은 최적화된 상태이므로, 당장 5세대로 옮기기보단 보장률 70~80%가 그대로 지켜지는 현재 상태를 장기간 지키는 것이 더 유용합니다.';
+                resultAdvice = '만약 현재 1, 2세대 가입자이시라면, 2026년 11월 이후 시행 예정인 3년간 50% 5세대 할인 전환 한시 프로모션 때까지 기다린 후 전환 실행을 최종 조율해보는 것이 가장 현명합니다.';
+            }
+
+            // Apply to DOM
+            document.getElementById('result-title').textContent = resultTitle;
+            document.getElementById('result-description').textContent = resultDesc;
+            document.getElementById('result-advice').textContent = resultAdvice;
+
+            // Render result step
+            document.getElementById('q-step-result').classList.remove('hidden');
+        }
+
+        function resetQuiz() {
+            // Reset state
+            quizAnswers = { 1: null, 2: null, 3: null, 4: null };
+
+            // Hide result, show Q1
+            document.getElementById('q-step-result').classList.add('hidden');
+            document.getElementById('q-step-4').classList.add('hidden');
+            document.getElementById('q-step-3').classList.add('hidden');
+            document.getElementById('q-step-2').classList.add('hidden');
+            document.getElementById('q-step-1').classList.remove('hidden');
+        }
+
+        // Helper functions for UI interaction
+        function scrollToSection(sectionId) {
+            const el = document.getElementById(sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function copyShareLink() {
+            // Copy URL safely using the fallback method requested in instructions
+            const tempInput = document.createElement("input");
+            tempInput.value = window.location.href;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            // Toast feedback
+            showToast("현재 분석 페이지 공유 링크가 클립보드에 복사되었습니다!");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // On window load trigger default selection (Gen 1)
+        window.onload = function() {
+            selectGeneration(1);
+            
+            // Set Dynamic print date
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            const date = today.getDate();
+            document.getElementById('print-date').textContent = `${year}년 ${month}월 ${date}일`;
+        }
+    </script>
+</body>
+</html>
